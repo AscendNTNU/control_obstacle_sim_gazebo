@@ -126,10 +126,10 @@ include_directories(
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/iarc_obstacle_description.cpp
 # )
-add_library(iarc_obstacle SHARED src/iarc_obstacle.cpp)
+add_library(iarc_obstacle MODULE src/iarc_obstacle.cpp)
 target_link_libraries(iarc_obstacle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-install(TARGETS iarc_obstacle 
-	LIBRARY DESTINATION plugins)
+#install(TARGETS iarc_obstacle 
+#	LIBRARY DESTINATION plugins)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
