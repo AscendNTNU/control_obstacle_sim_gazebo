@@ -1,13 +1,19 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(control_obstacle_sim_gazebo)
 
+
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED)
+find_package(gazebo REQUIRED)
+
+include_directories(${GAZEBO_INCLUDE_DIRS})
+link_directories(${GAZEBO_LIBRARY_DIRS})
+list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -100,7 +106,7 @@ find_package(catkin REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES iarc_obstacle_gazebo
+#  LIBRARIES iarc_obstacle_description
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
@@ -118,8 +124,12 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/iarc_obstacle_gazebo.cpp
+#   src/${PROJECT_NAME}/iarc_obstacle_description.cpp
 # )
+add_library(iarc_obstacle SHARED src/iarc_obstacle.cpp)
+target_link_libraries(iarc_obstacle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+install(TARGETS iarc_obstacle 
+	LIBRARY DESTINATION plugins)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -129,7 +139,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/iarc_obstacle_gazebo_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/iarc_obstacle_description_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -186,7 +196,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_iarc_obstacle_gazebo.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_iarc_obstacle_description.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
