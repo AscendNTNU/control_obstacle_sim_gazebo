@@ -1,0 +1,7 @@
+<launch>
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="world_name" value="$(find control_obstacle_sim_gazebo)/worlds/mist.world"/>
+		<!-- More can be added here -->
+	</include>
+</launch>
+
