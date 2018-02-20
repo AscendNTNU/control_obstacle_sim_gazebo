@@ -1,6 +1,6 @@
 #!/bin/bash
 
-declare catkin_ws_dir="/home/$USER/Dev/catkin_ws"
+declare catkin_ws_dir="../.."
 declare px4_dir="/home/$USER/Dev/PX4/PX4_2017"
 
 #source '$(px4_dir)'/Tools/setup_gazebo.bash '$(px4_dir)' '$(px4_dir)'/build_posix_sitl_default
