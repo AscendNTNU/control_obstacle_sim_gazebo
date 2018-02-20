@@ -8,8 +8,15 @@ add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
-find_package(gazebo REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+	ascend_msgs
+	gazebo_ros
+	gazebo
+	roscpp
+	genmsg
+	geometry_msgs
+	gazebo_msgs
+)
 
 include_directories(${GAZEBO_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS})
@@ -119,7 +126,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
 # include
-# ${catkin_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -128,8 +135,10 @@ include_directories(
 # )
 add_library(iarc_obstacle MODULE src/iarc_obstacle.cpp)
 target_link_libraries(iarc_obstacle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
-#install(TARGETS iarc_obstacle 
-#	LIBRARY DESTINATION plugins)
+
+add_executable(perception_emulator src/perception_emulator.cpp)
+target_link_libraries(perception_emulator ${catkin_LIBRARIES})
+#add_dependencies(perception_emulator perception_emulator_generate_messages_cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
