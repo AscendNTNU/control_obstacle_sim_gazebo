@@ -1,0 +1,14 @@
+material SingleGrid
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture grid20x20.png
+			}
+		}
+	}
+}
+

@@ -29,9 +29,16 @@
         </geometry>
         <material>
           <script>
+			<uri>model://game_plane/materials/scripts/game_plane.material</uri>
+			<uri>model://game_plane/materials/textures/rute.jpg</uri>
+            <name>SingleGrid</name>
+          </script>
+			<!--
+          <script>
             <uri>file://media/materials/scripts/gazebo.material</uri>
             <name>Gazebo/Grey</name>
           </script>
+			-->
         </material>
       </visual>
     </link>

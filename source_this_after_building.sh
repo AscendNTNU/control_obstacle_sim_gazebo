@@ -8,10 +8,10 @@ declare px4_dir="/home/$USER/Dev/PX4_2017"
 cp $catkin_ws_dir/devel/lib/libiarc_obstacle.so $catkin_ws_dir/src/control_obstacle_sim_gazebo/plugins
 
 source $px4_dir/Tools/setup_gazebo.bash $px4_dir $px4_dir/build_posix_sitl_default
-GAZEBO_MODEL_PATH=$catkin_ws_dir/src/control_obstacle_sim_gazebo/models:$GAZEBO_MODEL_PATH
-GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$px4_dir/Tools/sitl_gazebo/models
-GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:$catkin_ws_dir/src/control_obstacle_sim_gazebo/plugins
-GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:$px4_dir/build_posix_sitl_default/build_gazebo
+declare GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$(pwd)/models
+declare GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$px4_dir/Tools/sitl_gazebo/models
+declare GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:$catkin_ws_dir/src/control_obstacle_sim_gazebo/plugins
+declare GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:$px4_dir/build_posix_sitl_default/build_gazebo
 
 unset catkin_ws_dir
 unset px4_dir
