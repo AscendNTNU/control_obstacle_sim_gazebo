@@ -1,13 +1,23 @@
 #include <ros/ros.h>
+#include <tf/transform_datatypes.h>
+#include <tf2/LinearMath/Matrix3x3.h>
+#include <tf2/LinearMath/Quaternion.h>
 #include <cmath>
 #include <vector>
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/Point32.h>
-#include <geometry_msgs/Vector3.h>
+//#include <geometry_msgs/Vector3.h>
 #include <ascend_msgs/DetectedRobotsGlobalPositions.h>
 #include <gazebo_msgs/ModelStates.h>
 
+constexpr float PI{3.1415};
+constexpr float lidar_scan_angle{270*PI/180}; // lidar scans a range of 270 degrees
 ascend_msgs::DetectedRobotsGlobalPositions last_msg = {};
+
+template<typename T>
+inline T angleWrapper(const T angle){
+    return angle - 2*PI * floor(angle / (2*PI));
+}
 
 // Allows arbitrary conversions between point32, point, vector etc.
 // Works on anything with x,y,z as members
@@ -25,6 +35,26 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr model_states_p){
     using std::size_t;
     const size_t n_model_states = model_states_p->name.size();
 
+    auto iris_state_p = std::find(model_states_p->name.cbegin(), model_states_p->name.cend(), "iris");
+
+    bool limit_drone_perception = false;
+    geometry_msgs::Point drone_pos;
+    double drone_yaw;
+    if (iris_state_p == model_states_p->name.cend()){
+        ROS_WARN("Cant locate drone in gazebo/model_states");
+    } else {
+        limit_drone_perception = true;
+
+        int index = static_cast<int>(iris_state_p - model_states_p->name.cbegin());
+        drone_pos = model_states_p->pose[index].position;
+	auto quat = model_states_p->pose[index].orientation;
+	tf2::Quaternion q(quat.x, quat.y, quat.z, quat.w);
+
+	tf2::Matrix3x3 mat(q);
+	double roll, pitch;
+	mat.getRPY(roll, pitch, drone_yaw);
+    }
+
     int obstacle_counter = 0;
     ascend_msgs::DetectedRobotsGlobalPositions msg;
     std::vector<geometry_msgs::Point32> position;
@@ -34,18 +64,30 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr model_states_p){
     std::vector<float> direction_probability;
     for (size_t i = 0; i < n_model_states; ++i){
         if (model_states_p->name[i] == "iarc_obstacle"){
-            obstacle_counter++;
             
             geometry_msgs::Point gaz_pos = model_states_p->pose[i].position;
+	    // check if obstacle is visable
+            if (limit_drone_perception){
+                auto delta_x = gaz_pos.x - drone_pos.x;
+                auto delta_y = gaz_pos.y - drone_pos.y;
+                auto obstacle_angle = angleWrapper(std::atan2(delta_y, delta_x) - drone_yaw); // angle relative to drone
+
+		if (lidar_scan_angle/2 < obstacle_angle && obstacle_angle < (2*PI - lidar_scan_angle/2)){
+                    // obstacle not visible to lidar
+                    continue;
+		}
+            }
             msg.global_robot_position.push_back(convertPointType<geometry_msgs::Point32>(gaz_pos));
             msg.position_probability.push_back(1.f);
 
             msg.robot_color.push_back(0);
 
-	    const geometry_msgs::Vector3 vec = model_states_p->twist[i].linear;
+	    const auto vec = model_states_p->twist[i].linear;
             const float obs_direction = std::atan2(vec.y, vec.x);
 	    msg.direction.push_back(obs_direction);
 	    msg.direction_probability.push_back(1.f);
+
+            obstacle_counter++;
         }
     }
 

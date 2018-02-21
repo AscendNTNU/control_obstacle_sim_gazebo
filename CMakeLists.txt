@@ -16,6 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
 	genmsg
 	geometry_msgs
 	gazebo_msgs
+	tf	
+	tf2
 )
 
 include_directories(${GAZEBO_INCLUDE_DIRS})

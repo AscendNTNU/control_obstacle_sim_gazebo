@@ -9,6 +9,7 @@
 		</include>
 		<include>
 			<uri>model://iris</uri>
+			<pose>0 0 0 0 0 1.57</pose>
 		</include>
 		<include>
 			<uri>model://iarc_obstacle</uri>
