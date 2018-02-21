@@ -14,7 +14,7 @@ Drone and obstacle simulation in gazebo
     6.3 In another terminal, launch control\_fsm (for instance with _roslaunch control\_fsm test\_control\_fsm\_sim.launch_)
 7) Your terminal window should now look something like this 
 
-![](should look something like this.png)
+![](tutorial.png)
 
 
 
