@@ -13,7 +13,7 @@ Drone and obstacle simulation in gazebo
     6.2. In another terminal, cd to the PX4\_2017 folder and execute "no\_sim=1 make posix\_sitl\_default gazebo". This launches sets up sitl simulation of PX4 firmware for gazebo. The no\_sim=1 indicates that the command shouldn't launch gazebo. This window is where the commander app lies, which allows low level control of drone
     6.3 In another terminal, launch control\_fsm (for instance with _roslaunch control\_fsm test\_control\_fsm\_sim.launch_)
 7) Your terminal window should now look something like this 
-![](should\ look\ something\ like\ this.png)
+![](should look something like this.png)
 
 
 
