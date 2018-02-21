@@ -2,7 +2,11 @@
 <sdf version="1.4">
 	<world name="default">
 		<include>
-			<uri>model://ground_plane</uri>
+			<uri>model://wood_plane</uri>
+			<pose>0 0 -0.01 0 0 0</pose>
+		</include>
+		<include>
+			<uri>model://game_plane</uri>
 		</include>
 		<include>
 			<uri>model://sun</uri>
