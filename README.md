@@ -2,7 +2,7 @@
 Drone and obstacle simulation in gazebo
 
 # Guide
-1) Clone the repo into catkin_ws/src
+1) Clone the repo into catkin_ws/src, and clone PX4_2017 repo anywhere, for instance your home folder
 2) Build your catkin_ws (not tested with catkin build)
 3) Go into this repos folder and edit file "source_this_after_build.sh"
     * Change the _px4_dir_ to match the PX4_2017 folder (Must be an absolute path, for instance /home/$USER/PX4_2017)
@@ -14,7 +14,7 @@ Drone and obstacle simulation in gazebo
     6.3 In another terminal, launch control\_fsm (for instance with _roslaunch control\_fsm test\_control\_fsm\_sim.launch_)
 7) Your terminal window should now look something like this 
 
-![](should look something like this.png)
+![](tutorial.png)
 
 
 
