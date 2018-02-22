@@ -12,6 +12,7 @@
 
 constexpr float PI{3.1415};
 constexpr float lidar_scan_angle{270*PI/180}; // lidar scans a range of 270 degrees
+constexpr bool lidar_sees_all{true};
 ascend_msgs::DetectedRobotsGlobalPositions last_msg = {};
 
 template<typename T>
@@ -39,20 +40,21 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr model_states_p){
 
     bool limit_drone_perception = false;
     geometry_msgs::Point drone_pos;
-    double drone_yaw;
-    if (iris_state_p == model_states_p->name.cend()){
-        ROS_WARN("Cant locate drone in gazebo/model_states");
-    } else {
-        limit_drone_perception = true;
+    double drone_yaw = 0.0;
+    
+    if (limit_drone_perception){
+        if (iris_state_p == model_states_p->name.cend()){
+            ROS_WARN("Cant locate drone in gazebo/model_states");
+        } else {
+            int index = static_cast<int>(iris_state_p - model_states_p->name.cbegin());
+            drone_pos = model_states_p->pose[index].position;
+            auto quat = model_states_p->pose[index].orientation;
+            tf2::Quaternion q(quat.x, quat.y, quat.z, quat.w);
 
-        int index = static_cast<int>(iris_state_p - model_states_p->name.cbegin());
-        drone_pos = model_states_p->pose[index].position;
-	auto quat = model_states_p->pose[index].orientation;
-	tf2::Quaternion q(quat.x, quat.y, quat.z, quat.w);
-
-	tf2::Matrix3x3 mat(q);
-	double roll, pitch;
-	mat.getRPY(roll, pitch, drone_yaw);
+            tf2::Matrix3x3 mat(q);
+            double roll, pitch; // not used
+            mat.getRPY(roll, pitch, drone_yaw);
+        }
     }
 
     int obstacle_counter = 0;
@@ -65,11 +67,11 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr model_states_p){
     for (size_t i = 0; i < n_model_states; ++i){
         if (model_states_p->name[i] == "iarc_obstacle"){
             
-            geometry_msgs::Point gaz_pos = model_states_p->pose[i].position;
+            geometry_msgs::Point obs_pos = model_states_p->pose[i].position;
 	    // check if obstacle is visable
             if (limit_drone_perception){
-                auto delta_x = gaz_pos.x - drone_pos.x;
-                auto delta_y = gaz_pos.y - drone_pos.y;
+                auto delta_x = obs_pos.x - drone_pos.x;
+                auto delta_y = obs_pos.y - drone_pos.y;
                 auto obstacle_angle = angleWrapper(std::atan2(delta_y, delta_x) - drone_yaw); // angle relative to drone
 
 		if (lidar_scan_angle/2 < obstacle_angle && obstacle_angle < (2*PI - lidar_scan_angle/2)){
@@ -77,7 +79,7 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr model_states_p){
                     continue;
 		}
             }
-            msg.global_robot_position.push_back(convertPointType<geometry_msgs::Point32>(gaz_pos));
+            msg.global_robot_position.push_back(convertPointType<geometry_msgs::Point32>(obs_pos));
             msg.position_probability.push_back(1.f);
 
             msg.robot_color.push_back(0);
