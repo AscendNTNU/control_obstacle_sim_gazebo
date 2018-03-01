@@ -14,7 +14,7 @@
 
 		<include>
 			<uri>model://iris</uri>
-			<pose>10 -10 0 0 0 1.57</pose>
+			<pose>-10 -10 0 0 0 0</pose>
 		</include>
 		<include>
 			<uri>model://iarc_obstacle</uri>
