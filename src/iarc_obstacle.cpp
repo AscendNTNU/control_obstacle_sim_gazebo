@@ -37,7 +37,7 @@ namespace gazebo
 
         public: void OnUpdate(const common::UpdateInfo& _info)
         {
-            constexpr auto vel{0.33};
+            constexpr auto vel{0};
             const gazebo::math::Pose pose = this->model->GetWorldPose();
             const auto radius = std::sqrt(std::pow(pose.pos.x - 10.0, 2) + std::pow(pose.pos.y - 10.0, 2));
             const auto angular_velocity = vel/radius;
