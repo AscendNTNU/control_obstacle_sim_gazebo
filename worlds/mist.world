@@ -3,10 +3,11 @@
 	<world name="default">
 		<include>
 			<uri>model://wood_plane</uri>
-			<pose>0 0 -0.01 0 0 0</pose>
+			<pose>10 10 -0.01 0 0 0</pose>
 		</include>
 		<include>
 			<uri>model://game_plane</uri>
+			<pose>10 10 0 0 0 0</pose>
 		</include>
 		<include>
 			<uri>model://sun</uri>
@@ -14,23 +15,23 @@
 
 		<include>
 			<uri>model://iris</uri>
-			<pose>-10 -10 0 0 0 0</pose>
+			<pose>0.5 0.5 0 0 0 0</pose>
 		</include>
 		<include>
 			<uri>model://iarc_obstacle</uri>
-			<pose>5 0 0 0 0 0</pose>
+			<pose>10 5 0 0 0 0</pose>
 		</include>
 		<include>
 			<uri>model://iarc_obstacle</uri>
-			<pose>-5 0 0 0 0 0</pose>
+			<pose>15 10 0 0 0 0</pose>
 		</include>
 		<include>
 			<uri>model://iarc_obstacle</uri>
-			<pose>0 -5 0 0 0 0</pose>
+			<pose>10 15 0 0 0 0</pose>
 		</include>
 		<include>
 			<uri>model://iarc_obstacle</uri>
-			<pose>0 5 0 0 0 0</pose>
+			<pose>5 10 0 0 0 0</pose>
 		</include>
 	</world>
 </sdf>
