@@ -32,6 +32,13 @@ inline T convertPointType(const K& point){
     return new_point;
 }
 
+bool isPrefix(const std::string& shorter, const std::string& longer){
+    return std::equal(
+            shorter.begin(),
+            shorter.begin() + std::min(shorter.size(), longer.size()),
+            longer.begin() );
+}
+
 void callback(const gazebo_msgs::ModelStates::ConstPtr model_states_p){
     using std::size_t;
     const size_t n_model_states = model_states_p->name.size();
@@ -65,7 +72,7 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr model_states_p){
     std::vector<float> direction;
     std::vector<float> direction_probability;
     for (size_t i = 0; i < n_model_states; ++i){
-        if (model_states_p->name[i] == "iarc_obstacle"){
+        if (isPrefix("iarc_obstacle", model_states_p->name[i])){
             
             geometry_msgs::Point obs_pos = model_states_p->pose[i].position;
 	    // check if obstacle is visable

@@ -16,7 +16,6 @@ find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	tf2
 	message_generation
-	SDFormat
 )
 
 
@@ -50,16 +49,14 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${SDFormat_INCLUDE_DIRS}
 )
-link_directories(${SDFormat_LIBRARY_DIRS})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/iarc_obstacle_description.cpp
 # )
 add_library(iarc_obstacle MODULE src/iarc_obstacle.cpp)
-target_link_libraries(iarc_obstacle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES} ${SDFormat_LIBRARIES})
+target_link_libraries(iarc_obstacle ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
 add_executable(perception_emulator src/perception_emulator.cpp)
 add_dependencies(perception_emulator ${catkin_EXPORTED_TARGETS} perception_emulator_generate_messages_cpp)
