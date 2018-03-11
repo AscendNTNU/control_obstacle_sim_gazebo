@@ -19,6 +19,10 @@ namespace gazebo
         {
 	    //this->startPose = _sdf->GetElement("iarc_obstacle")->GetValuePose();
 
+	    if (_sdf->HasElement("vel")){
+		velocity = _sdf->Get<double>("vel");
+                printf("[iarc_obstacle] Velocity %.2f registered\n", velocity);
+	    }
 
             const gazebo::math::Pose pose = _parent->GetWorldPose();
 
@@ -29,9 +33,6 @@ namespace gazebo
             this->updateConnection = event::Events::ConnectWorldUpdateBegin(
                     boost::bind(&Obstacle::OnUpdate, this, _1));
 
-            printf("[iarc_obstacle] Obstacle loaded at %.2f\t%.2f\n", 
-			    this->start_pose.pos.x, this->start_pose.pos.y);
-            
 
         }
 
@@ -54,6 +55,8 @@ namespace gazebo
         private: event::ConnectionPtr updateConnection;
 
 	private: gazebo::math::Pose start_pose;
+
+	private: double velocity = 0.33;
     };
 
     GZ_REGISTER_MODEL_PLUGIN(Obstacle)

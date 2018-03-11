@@ -6,6 +6,7 @@
 #include <vector>
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/Point32.h>
+#include <geometry_msgs/PoseStamped.h>
 //#include <geometry_msgs/Vector3.h>
 #include <ascend_msgs/DetectedRobotsGlobalPositions.h>
 #include <gazebo_msgs/ModelStates.h>
@@ -13,7 +14,9 @@
 constexpr float PI{3.1415};
 constexpr float lidar_scan_angle{270*PI/180}; // lidar scans a range of 270 degrees
 constexpr bool lidar_sees_all{true};
-ascend_msgs::DetectedRobotsGlobalPositions last_msg = {};
+constexpr bool drone_mocap_enable{true};
+ascend_msgs::DetectedRobotsGlobalPositions lidar_data = {};
+geometry_msgs::PoseStamped mocap_data = {};
 
 template<typename T>
 inline T angleWrapper(const T angle){
@@ -49,9 +52,9 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr model_states_p){
     geometry_msgs::Point drone_pos;
     double drone_yaw = 0.0;
     
-    if (limit_drone_perception){
+    if (limit_drone_perception || drone_mocap_enable){
         if (iris_state_p == model_states_p->name.cend()){
-            ROS_WARN("Cant locate drone in gazebo/model_states");
+            ROS_ERROR("Cant locate drone in gazebo/model_states");
         } else {
             int index = static_cast<int>(iris_state_p - model_states_p->name.cbegin());
             drone_pos = model_states_p->pose[index].position;
@@ -61,8 +64,17 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr model_states_p){
             tf2::Matrix3x3 mat(q);
             double roll, pitch; // not used
             mat.getRPY(roll, pitch, drone_yaw);
+
+
+            if (drone_mocap_enable){
+                mocap_data.header.stamp = ros::Time::now();
+                mocap_data.pose.position = drone_pos;
+                mocap_data.pose.orientation = quat;
+            }
+
         }
     }
+
 
     int obstacle_counter = 0;
     ascend_msgs::DetectedRobotsGlobalPositions msg;
@@ -103,7 +115,7 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr model_states_p){
     msg.header.stamp = ros::Time::now();
     msg.count = obstacle_counter;
 
-    last_msg = msg; 
+    lidar_data = msg; 
 }
 
 int main(int argc, char** argv){
@@ -111,13 +123,15 @@ int main(int argc, char** argv){
 
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe<gazebo_msgs::ModelStates>("/gazebo/model_states",1, &callback);
-    ros::Publisher pub = n.advertise<ascend_msgs::DetectedRobotsGlobalPositions>("/perception/obstacles/lidar", 1);
+    ros::Publisher lidar_pub = n.advertise<ascend_msgs::DetectedRobotsGlobalPositions>("/perception/obstacles/lidar", 1);
+    ros::Publisher mocap_pub = n.advertise<geometry_msgs::PoseStamped>("/mavros/mocap/pose", 1);
 
     ros::Rate rate(10.f);
     while (ros::ok()){
         ros::spinOnce();
 
-        pub.publish(last_msg);
+        lidar_pub.publish(lidar_data);
+        mocap_pub.publish(mocap_data);
         rate.sleep();
     }
 }

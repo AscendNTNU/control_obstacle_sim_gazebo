@@ -218,6 +218,8 @@
     <static>0</static>
     <allow_auto_disable>1</allow_auto_disable>
 
-    <plugin name="iarc_obstacle" filename="libiarc_obstacle.so"/>
+	<plugin name="iarc_obstacle" filename="libiarc_obstacle.so">
+		<vel>0.33</vel>
+	</plugin>
 </model>
 </sdf>
