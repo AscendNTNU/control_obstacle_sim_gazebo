@@ -15,6 +15,7 @@ constexpr float PI{3.1415};
 constexpr float lidar_scan_angle{270*PI/180}; // lidar scans a range of 270 degrees
 constexpr bool lidar_sees_all{true};
 constexpr bool drone_mocap_enable{true};
+
 ascend_msgs::DetectedRobotsGlobalPositions lidar_data = {};
 geometry_msgs::PoseStamped mocap_data = {};
 
@@ -67,6 +68,7 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr model_states_p){
 
 
             if (drone_mocap_enable){
+                mocap_data.header.frame_id = "map";
                 mocap_data.header.stamp = ros::Time::now();
                 mocap_data.pose.position = drone_pos;
                 mocap_data.pose.orientation = quat;
