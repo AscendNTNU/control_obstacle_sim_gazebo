@@ -128,7 +128,7 @@ int main(int argc, char** argv){
     ros::Publisher lidar_pub = n.advertise<ascend_msgs::DetectedRobotsGlobalPositions>("/perception/obstacles/lidar", 1);
     ros::Publisher mocap_pub = n.advertise<geometry_msgs::PoseStamped>("/mavros/mocap/pose", 1);
 
-    ros::Rate rate(10.f);
+    ros::Rate rate(30.f);
     while (ros::ok()){
         ros::spinOnce();
 
