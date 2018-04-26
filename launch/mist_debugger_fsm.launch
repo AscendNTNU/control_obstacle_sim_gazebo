@@ -3,9 +3,13 @@
 	<arg name="dummy1" value="$(env GAZEBO_PLUGIN_PATH)"/>
 	<arg name="dummy2" value="$(env GAZEBO_MODEL_PATH)" />
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">
-		<arg name="world_name" value="$(find control_obstacle_sim_gazebo)/worlds/mist_empty.world"/>
+		<arg name="world_name" value="$(find control_obstacle_sim_gazebo)/worlds/mist.world"/>
 		<!-- More can be added here -->
 	</include>
 	<node name="perception_emulator" pkg="control_obstacle_sim_gazebo" type="perception_emulator"/>
+    
+    <include file="$(find control_fsm)/launch/test_control_fsm_sim.launch"/>
+    <include file="$(find mission_debugger)/launch/mission_debugger.launch"/>
+        
 </launch>
 
