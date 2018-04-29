@@ -4,6 +4,7 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <cmath>
 #include <vector>
+#include <sensor_msgs/Range.h>
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/Point32.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -15,7 +16,9 @@ constexpr float PI{3.1415};
 constexpr float lidar_scan_angle{270*PI/180}; // lidar scans a range of 270 degrees
 constexpr bool lidar_sees_all{true};
 constexpr bool drone_mocap_enable{true};
+constexpr bool height_lidar_enable{true};
 
+sensor_msgs::Range height_lidar_data = {};
 ascend_msgs::DetectedRobotsGlobalPositions lidar_data = {};
 geometry_msgs::PoseStamped mocap_data = {};
 
@@ -73,9 +76,16 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr model_states_p){
                 mocap_data.pose.position = drone_pos;
                 mocap_data.pose.orientation = quat;
             }
-
+            
+            if (height_lidar_enable){
+                height_lidar_data.header.stamp = ros::Time::now();
+                height_lidar_data.range = drone_pos.z;
+            }
         }
     }
+    
+
+
 
 
     int obstacle_counter = 0;
@@ -126,6 +136,7 @@ int main(int argc, char** argv){
     ros::NodeHandle n;
     ros::Subscriber sub = n.subscribe<gazebo_msgs::ModelStates>("/gazebo/model_states",1, &callback);
     ros::Publisher lidar_pub = n.advertise<ascend_msgs::DetectedRobotsGlobalPositions>("/perception/obstacles/lidar", 1);
+    ros::Publisher height_lidar_pub = n.advertise<sensor_msgs::Range>("/mavros/distance_sensor/hrlv_ez4_pub", 1);
     ros::Publisher mocap_pub = n.advertise<geometry_msgs::PoseStamped>("/mavros/mocap/pose", 1);
 
     ros::Rate rate(30.f);
@@ -134,6 +145,7 @@ int main(int argc, char** argv){
 
         lidar_pub.publish(lidar_data);
         mocap_pub.publish(mocap_data);
+        height_lidar_pub.publish(height_lidar_data);
         rate.sleep();
     }
 }
